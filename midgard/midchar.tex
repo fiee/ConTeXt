@@ -1,0 +1,339 @@
+\starttext
+
+\mainlanguage		[de]
+
+\usemodule[simplefonts]
+% Covington fonts by Apostrophe Labs (free), see e.g. 
+% http://moorstation.org/typoasis/designers/lab/index.htm
+\setmainfont[Covington]
+\setsansfont[Covington-Exp]
+\setupbodyfont		[rm, 7.5pt]
+\setupbodyfontenvironment	[default][em=italic]
+
+\setuptolerance	    [verytolerant]
+\setupindenting		[0pt]
+
+\setuppapersize	    [A4,landscape][A4,landscape]
+\setuplayout		[location=singlesided, grid=no,
+                    topspace=0mm, backspace=6mm,
+                    header=5mm, height=205mm,
+                    footer=0mm, width=285mm,
+                    %leftmargin=6mm,
+                    rightmargin=6mm,
+                    leftmargindistance=0mm, rightmargindistance=0mm,
+                    headerdistance=0mm
+                    ]
+\setuppagenumbering [state=stop]
+\setupinteraction	[state=start]
+\setupcolors		[state=start]
+
+\setupinteraction
+   [title={Midgard Charakterbogen},
+    author={Henning Hraban Ramm},
+    keyword={Midgard Rollenspiel RPG Fantasy Character Sheet SpF}]
+
+%\tracefieldstrue % DEBUG
+
+% define text fields
+% 1: Außenrahmen
+% 2: Label
+% 3: Entry
+%\setupfields	[label,frame,horizontal]
+%			[frame=off, offset=0pt, height=10pt]
+%			[frame=off, offset=0pt, width=35mm, align=right, height=10pt]
+%			[frame=off, width=5mm, offset=0pt, height=10pt]
+%\setupfield		[fett][label, frame, horizontal]
+%			[]
+%			[style=\bf]
+%			[]
+%\setupfields	[line][frame=off, height=10pt, width=5mm]
+%\setupfield		[Grundwert][line][style=\bf]
+
+\setupfields[option=printable]
+
+\setupfield	[MidWert][reset,horizontal]
+		[frame=off, height=11pt, width=6.5mm, offset=0pt]
+\setupfield	[MidBon][reset,horizontal]
+		[frame=off, height=11pt, width=14mm, offset=0pt]
+\setupfield	[MidFert][reset,horizontal]
+		[frame=off, height=11pt, width=4.5mm, offset=0pt]
+\setupfield	[MidWide1][reset,horizontal]
+			[frame=off, height=11pt, width=21mm, offset=0pt]
+\setupfield	[MidWide2][reset,horizontal]
+			[frame=off, height=11pt, width=71mm, offset=0pt]
+\setupfield	[MidWide3][reset,horizontal]
+			[frame=off, height=11pt, width=114.5mm, offset=0pt]
+
+% \DivFeld{Name}{Typ}
+\def\DivFeld#1#2{\bTD\definefield[#1][line][#2][]\field[#1]\eTD}
+
+\def\Leerzeile#1{\bTR\bTD[nc=#1]\strut\eTD\eTR}
+\def\WertFeld#1#2{\bTR\bTD #1\hfill(#2)\eTD\DivFeld{#2}{MidWert}\eTR}
+\def\GrundwertFeld#1#2{\bTR\bTD{\ss\bf #1}\hfill(#2)\eTD\bTD\bf\definefield[#2][line][MidWert][]\field[#2]\eTD\eTR}
+\def\BonusFeld#1{\DivFeld{#1}{MidBon}}
+
+\def\Sprache#1{\bTR\DivFeld{Sprache#1Name}{MidWide1}\DivFeld{Sprache#1Sprechen}{MidFert}\DivFeld{Sprache#1Schreiben}{MidFert}\eTR}
+
+% \SinnFeld[+8][Hoeren]{Hören}
+\def\SinnFeld{\dodoubleempty\doSinnFeld}
+\def\doSinnFeld[#1][#2]#3{\bTR\bTD[nc=2] #3
+	\doifelsenothing{#1}{}{\hfill (#1)}
+	\eTD \bTD
+	\doifelsenothing{#2}%
+	{\definefield[#3][line][MidFert][#1]\field[#3]}%
+	{\definefield[#2][line][MidFert][#1]\field[#2]}
+	\eTD\eTR}
+
+% \SkillFeld[+8][Aergern]{Ärgern}
+\def\SkillFeld{\dodoubleempty\doSkillFeld}
+\def\doSkillFeld[#1][#2]#3{\bTR\bTD #3
+	\iffirstargument\hfill (#1)\fi
+	\eTD \bTD
+	\doifelsenothing{#2}{
+		\definefield[#3][line][MidFert][#1]\field[#3]
+	}{
+		\definefield[#2][line][MidFert][#1]\field[#2]
+	}
+	\eTD\eTR}
+
+% \SkillFeld[+8][Ueberleben]{Überleben}{(Heimat)}
+\def\SkillFeldHoch{\dodoubleempty\doSkillFeldHoch}
+\def\doSkillFeldHoch[#1][#2]#3#4{\bTR[bottomframe=off]\bTD #3 
+	\iffirstargument\hfill (#1)\fi
+	\eTD \bTD
+	\doifelsenothing{#2}{
+		\definefield[#3][line][MidFert][#1]\field[#3]
+	}{
+		\definefield[#2][line][MidFert][#1]\field[#2]
+	}
+	\eTD\eTR
+	\bTR[topframe=off]
+	\bTD #4\eTD\bTD\strut\eTD\eTR}
+
+\def\SkillFeldLeer#1{\bTR\DivFeld{Fertigkeit#1Name}{MidWide1}\DivFeld{Fertigkeit#1Wert}{MidFert}\eTR}
+
+\setupheader[text][state=start, style={\bfa}]
+\setuphead[title][style={\ss\bfd}, align=center, page=no, before={}, after={}] %\hw\bfd\sc
+\setuphead[subject][style={\ss}]
+\setupcaptions[align=right, style={\ss}, location=top]
+\setupcombinations[align=right, style={\ss}, location=high, width=fit]
+
+% hw: plain=first / it=cond / sl=light / bd=exp
+
+%%% ENDE DEFINITIONEN
+
+%\title{Midgard Charakterblatt}
+\externalfigure[midgard-kopf][width=\textwidth]
+\blank
+
+\hbox\bgroup
+% LINKE SEITE
+\vbox\bgroup
+\setupTABLE[width=fit]
+\setupTABLE[column][1,3,4][width=22mm]
+\setupTABLE[column][2][width=71.75mm]
+\bTABLE
+\bTR\bTD \bf Name der Figur	\eTD\bTD\bf\definefield[SpfName][line][MidWide2][]\field[SpfName]\eTD\bTD SpielerIn		\eTD\DivFeld{Spieler}{MidWide1}\eTR
+\bTR\bTD Typ/Spezialisierung	\eTD\DivFeld{Typ}{MidWide2}		\bTD Grad			\eTD\DivFeld{Grad}{MidWide1}\eTR
+\bTR\bTD Heimat			\eTD\DivFeld{Heimat}{MidWide2}	\bTD Geburtstag/Alter	\eTD\DivFeld{Alter}{MidWide1}\eTR
+\bTR\bTD Glaube			\eTD\DivFeld{Glaube}{MidWide2}	\bTD Gestalt			\eTD\DivFeld{Gestalt}{MidWide1}\eTR
+\bTR\bTD Stand			\eTD\DivFeld{Stand}{MidWide2}		\bTD Gewicht/Größe	\eTD\DivFeld{Gewicht}{MidWide1}\eTR
+\bTR\bTD Berufe			\eTD\DivFeld{Berufe}{MidWide2}		\bTD Händigkeit		\eTD\DivFeld{haendig}{MidWide1}\eTR
+\bTR\bTD Merkmale		\eTD \bTD[nc=3]\definefield[Merkmale][line][MidWide3][]\field[Merkmale]\eTD\eTR
+%\bTR\bTD Merkmale		\eTD	\bTD[nr=2,nc=3]	{\strut}\eTD\eTR
+%\bTR\bTD	{\strut}\eTD\eTR
+\eTABLE
+\blank
+%
+\setupTABLE[column][1][width=37mm]
+\setupTABLE[column][2][width=7mm]
+\startcombination[3*2]%
+{\bTABLE
+\GrundwertFeld{Stärke}{St}
+\GrundwertFeld{Konstitution}{Ko}
+\WertFeld{Aussehen}{Au}
+\WertFeld{Selbstbeherrschung}{Sb}
+\WertFeld{Göttliche Gnade}{GG}
+\eTABLE}{}
+{\bTABLE
+\GrundwertFeld{Geschicklichkeit}{Ge}
+\GrundwertFeld{Intelligenz}{In}
+\WertFeld{pers. Ausstrahlung}{pA}
+\WertFeld{Willenskraft}{Wk}
+\WertFeld{Schicksalsgunst}{SG}
+\eTABLE}{}
+{\bTABLE
+\GrundwertFeld{Gewandtheit}{Gw}
+\GrundwertFeld{Zaubertalent}{Zt}
+\WertFeld{Bewegungsweite}{B}
+\GrundwertFeld{AP-Maximum}{APmax}
+\GrundwertFeld{LP-Maximum}{LPmax}
+\eTABLE}{}
+%\blank
+{\bTABLE
+\bTR\bTD[nc=2]\ss Boni\eTD\eTR
+\WertFeld{Ausdauerbonus}{AusB}
+\WertFeld{Schadensbonus}{SchB}
+\WertFeld{Angriffsbonus}{AnB}
+\WertFeld{Abwehrbonus}{AbB}
+\WertFeld{Zauberbonus}{ZauB}
+\eTABLE}{}%{Boni}
+{\bTABLE
+\bTR\bTD[nc=2]\ss Resistenzen\eTD\eTR
+\WertFeld{Geistesmagie}{psyR}
+\WertFeld{Körpermagie}{phsR}
+\WertFeld{Umgebungsmagie}{phkR}
+\Leerzeile{2}
+\WertFeld{Gifttoleranz}{GiT}
+\eTABLE}{}%{Resistenzen}
+{\bTABLE
+\bTR\bTD[nc=2]\ss Rüstung\eTD\eTR
+\WertFeld{Rüstungsklasse (--\hfill LP)}{RK}
+\WertFeld{Bewegungsweite i.R.}{B iR}
+\WertFeld{Gewandtheit i.R.}{Gw iR}
+\WertFeld{Angriffsbonus i.R.}{AnB iR}
+\WertFeld{Abwehrbonus i.R.}{AbB iR}
+\eTABLE}{}%{Rüstung}
+\stopcombination
+\egroup% vbox
+% RECHTE SEITE
+\hfil%
+\setupTABLE[column][1][width=94mm] %45mm
+\setupTABLE[column][2,3,4,5,6,7,8][width=7mm]
+\bTABLE % Zauber
+\bTR\bTD{\ss Zauber}\eTD\bTD\tooltip{AP}{AP-Kosten}\eTD\bTD Art \eTD\bTD\tooltip{Wz}{Wirkungszeit}\eTD\bTD\tooltip{Zd}{Zauberdauer}\eTD\bTD\tooltip{Wd}{Wirkungsdauer}\eTD\bTD \tooltip{Wb}{Wirkungsbereich}\eTD\bTD\tooltip{Rw}{Reichweite}\eTD\eTR
+\dorecurse{18}{\bTR\dorecurse{8}{\bTD\strut\eTD}\eTR}
+\bTR[frame=off, align=low]\bTD[nc=8]\vfilll\eTD\eTR
+\eTABLE% Zauber
+\egroup% hbox
+
+\vfilll
+
+% UNTEN
+
+\setupTABLE[column][1][width=25mm]
+\setupTABLE[column][2,3,4][width=5mm]
+\startcombination[6*1]%
+{\bTABLE
+%\dorecurse{8}{\bTR\bTD \strut \eTD	\bTD \strut \eTD	\bTD \strut \eTD\eTR}
+%\dorecurse{8}{\expandafter{\Sprache{\recurselevel}}} %%%%%%%%%%%%%%%%%%% Wie geht das??
+\bTR\bTD[nc=3]{\ss Sprachen}\hfill{\tfx sprechen/schreiben}\eTD\eTR
+\Sprache{1}
+\Sprache{2}
+\Sprache{3}
+\Sprache{4}
+\Sprache{5}
+\Sprache{6}
+\Sprache{7}
+\Sprache{8}
+\Sprache{9}
+\Sprache{10}
+%\Leerzeile{3}
+\bTR\bTD[nc=3]{\ss Sinne}\eTD\eTR
+\SinnFeld[+8]{Sehen}
+\SinnFeld[+8][Hoeren]{Hören}
+\SinnFeld[+8]{Riechen}
+\SinnFeld[+8]{Schmecken}
+\SinnFeld[+8]{Tasten}
+\SinnFeld[+2][SechsterSinn]{6. Sinn}
+\eTABLE}{}%{\tooltip{Sprachen}{sprechen/schreiben} \& Sinne}
+{\bTABLE
+\SkillFeld[+11][Abwehr]{\bf Abwehr (+AbB)}
+\SkillFeld[+8]{Akrobatik}
+\SkillFeld[+8]{Balancieren}
+\SkillFeld[+3]{Beredsamkeit}
+\SkillFeld[+3]{Beschatten}
+\SkillFeld[+0]{Erste Hilfe}
+\SkillFeld[+4][Erzaehlen]{Erzählen}
+\SkillFeld[+0]{Fallen entdecken}
+\SkillFeld[+1]{Fallen stellen}
+\SkillFeld[+0]{Fallenmechanik}
+\SkillFeld[+8]{Fangen}
+\SkillFeld[+1][Geheimmechanismen]{Geh.mech. öffn.}
+\SkillFeld[+8][Gelaendelauf]{Geländelauf}
+\SkillFeld[+5]{Kampftaktik}
+\SkillFeld[+8]{Klettern}
+\SkillFeldHoch[+8]{Landeskunde}{(Heimat)}
+\SkillFeld[+3][Menschenkenntnis]{Menschenkennt.}
+\eTABLE}{}%{Fertigkeiten}
+{\bTABLE
+\SkillFeld[+0/+6]{Meucheln}
+\SkillFeld[+0]{Naturkunde}
+\SkillFeld[+0]{Pflanzenkunde}
+\SkillFeld[+5]{Reiten}
+\SkillFeld[+3]{Rudern}
+\SkillFeld[+0]{Sagenkunde}
+\SkillFeld[+3]{Schleichen}
+\SkillFeld[+3]{Schlitten fahren}
+\SkillFeld[+0][SchloesserOeffnen]{Schlösser öffnen}
+\SkillFeld[+3]{Schwimmen}
+\SkillFeld[+4]{Seilkunst}
+\SkillFeld[+4]{Singen}
+\SkillFeld[+8]{Springen}
+\SkillFeld[+0]{Spuren lesen}
+\SkillFeld[+3]{Stehlen}
+\SkillFeld[+3]{Suchen}
+\SkillFeld[+8]{Tanzen}
+\SkillFeld[+3]{Tarnen}
+\eTABLE}{}%{Fertigkeiten}
+{\bTABLE
+\SkillFeld[+9]{Tauchen}
+\SkillFeld[+0]{Tierkunde}
+\SkillFeld[+Ko/10]{Trinken}
+\SkillFeldHoch[+6][Ueberleben]{Überleben}{(Heimat)}
+%\bTR[bottomframe=off]\bTD Überleben\eTD\bTD +6\eTD\eTR
+%\bTR[topframe=off]\bTD (Heimat)\eTD\bTD\strut\eTD\eTR
+\SkillFeld[+3]{Verbergen}
+\SkillFeld[+3][Verfuehren]{Verführen}
+\SkillFeld[+3][Verhoeren]{Verhören}
+\SkillFeld[+5]{Verkleiden}
+\SkillFeld[+3]{Wagen lenken}
+\SkillFeld[+2]{Wahrnehmung}
+\SkillFeld[+4]{Werfen}
+\SkillFeld[+0]{Zauberkunde}
+\SkillFeld[+2][Zaubern]{\bf Zaubern (+ZauB)}
+\SkillFeldLeer{0}
+\SkillFeldLeer{1}
+\SkillFeldLeer{2}
+\SkillFeldLeer{3}
+%\dorecurse{4}{\bTR\bTD\strut\eTD\bTD\strut\eTD\eTR}
+%\dorecurse{6}{\SkillFeld{?}}
+\eTABLE}{}%{Fertigkeiten}
+{\bTABLE
+\SkillFeldLeer{4}
+\SkillFeldLeer{5}
+\SkillFeldLeer{6}
+\SkillFeldLeer{7}
+\SkillFeldLeer{8}
+\SkillFeldLeer{9}
+\SkillFeldLeer{10}
+\SkillFeldLeer{11}
+\SkillFeldLeer{12}
+\SkillFeldLeer{13}
+\SkillFeldLeer{14}
+\SkillFeldLeer{15}
+\SkillFeldLeer{16}
+\SkillFeldLeer{17}
+\SkillFeldLeer{18}
+\SkillFeldLeer{19}
+\SkillFeldLeer{20}
+\SkillFeldLeer{21}
+%\dorecurse{18}{\bTR\bTD\strut\eTD\bTD\strut\eTD\eTR}
+\eTABLE}{}%{Fertigkeiten}
+{\setupTABLE[column][3][width=10mm]
+\bTABLE
+\bTR\bTD\ss Waffenfertigkeit \eTD	\bTD EW \eTD\bTD{\tfx Schaden}\eTD\bTD Nah \eTD\eTR
+\bTR\bTD\bf Raufen\eTD\bTD\strut\eTD\bTD\strut\eTD\bTD\strut\eTD\eTR
+\dorecurse{16}{\bTR\bTD\strut\eTD\bTD\strut\eTD\bTD\strut\eTD\bTD\strut\eTD\eTR}
+\eTABLE}{}%{Waffenfertigkeiten}
+\stopcombination
+
+\page
+\externalfigure[midgard-kopf][width=\textwidth]
+\title{Aktuelles Abenteuer}
+
+%\startcolumns[n=2]
+%\showfields
+%\stopcolumns
+
+\stoptext
