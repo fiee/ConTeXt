@@ -3,7 +3,7 @@ t-lilypond
 
 fiëé visuëlle
 Henning Hraban Ramm
-http://fiee.net
+http://www.fiee.net
 
 Bridge module between ConTeXt and GNU LilyPond - text and music typesetting now integrated.
 
@@ -25,9 +25,9 @@ GPL V.2
 
 Links
 -----
-ConTeXt: wiki.contextgarden.net, www.pragma-ade.com
-LilyPond: lilypond.org
-Module documentation: wiki.contextgarden.net/LilyPond
+ConTeXt: http://wiki.contextgarden.net, http://www.pragma-ade.com
+LilyPond: http://lilypond.org
+Module documentation: http://wiki.contextgarden.net/LilyPond
 
 
 Files
