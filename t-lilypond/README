@@ -1,0 +1,38 @@
+t-lilypond
+==========
+
+fiëé visuëlle
+Henning Hraban Ramm
+http://fiee.net
+
+Bridge module between ConTeXt and GNU LilyPond - text and music typesetting now integrated.
+
+Works with LuaTeX-based ConTeXt MkIV (latest beta) and LilyPond 2.12 (latest stable).
+
+
+Authors
+-------
+Originally written by Christopher Creutzig, 
+enhanced and maintained by H. Ramm, 
+with contributions by ConTeXt gurus 
+Mojca Miklavec and Wolfgang Schuster.
+
+
+Licence
+-------
+GPL V.2
+
+
+Links
+-----
+ConTeXt: wiki.contextgarden.net, www.pragma-ade.com
+LilyPond: lilypond.org
+Module documentation: wiki.contextgarden.net/LilyPond
+
+
+Files
+-----
+* t-lilypond.tex The Module
+* t-lilypond.pdf Documentation
+* demo.pdf Sample of output
+* makezip.sh Release script

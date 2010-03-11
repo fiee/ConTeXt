@@ -1,0 +1,432 @@
+%D \module
+%D    [          file=t-lilypond,
+%D            version=2010.03.11,
+%D              title=\CONTEXT\ User Modules,
+%D           subtitle=LilyPond Bridge (Music Typesetting),
+%D             author={Christopher Creutzig, H. Ramm et al.}, % with contributions by Mojca Miklavec and Wolfgang Schuster
+%D		   maintainer={Henning Hraban Ramm, hraban@fiee.net},
+%D               date=\currentdate,
+%D          copyright=the authors]
+%C
+%C This module is licensed under the GNU GPL V2.
+
+%D This module serves to include LilyPond music directly in the
+%D \CONTEXT\ source, just as \METAPOST\ code can be.
+%D
+%D It is supposed to work only with LilyPond's stable version 2.12 and \CONTEXT\ MkIV i.\,e. \LUATEX.
+%D
+%D {\bfa Complete list of options:}
+%D
+%D \starttabulate[|l|l|l|]
+%D    \NC option\NC default\NC comment\NC\NR
+%D    \HL
+%D    \NC staffsize\NC 14\NC in pt    \NC\NR
+%D    \NC indent\NC 0pt\NC first line indent    \NC\NR
+%D    \NC time\NC yes\NC count time? (i.e. show time signature, set bars, split line)    \NC\NR
+%D    \NC clef\NC yes\NC show clef?    \NC\NR
+%D    \NC linewidth\NC \type{\localhsize}\NC    \NC\NR
+%D    \NC betweensystemspace\NC 54pt\NC space between systems    \NC\NR
+%D    \NC height\NC \type{\textheight}\NC    \NR
+%D    \NC align\NC ?\NC default depends on fragment=...    \NC\NR
+%D    \NC fragment\NC no\NC whole staff line or only snippet?   \NC\NR
+%D    \NC barnumbers\NC no\NC show numbers of measures?    \NC\NR
+%D    \NC showempty\NC no\NC drop empty staves?    \NC\NR
+%D    \NC seriffont\NC "TeX Gyre Schola"\NC font for e.g. lyrics    \NC\NR
+%D    \NC sansfont\NC "LMSans10"\NC font for e.g. chords    \NC\NR
+%D    \NC monofont\NC "LMTypewriter10" \NC normally not used    \NC\NR
+%D    \NC tmpdir\NC ./lilytemp \NC directory for temporary files \NC\NR
+%D    \NC imgdir\NC ./lilypdfs \NC directory for image files (note PDFs) \NC\NR
+%D \stoptabulate
+%D
+%D {\bfa Todo list}
+%D
+%D \startitemize[packed,joinedup]
+%D \item Proper support for multipage results.
+%D \item Set LilyPond page size to remaining page space.
+%D \item Place instrument names in margin.
+%D \item Work with existing PDFs on systems where LilyPond isn't installed.
+%D \stopitemize
+%D
+%D {\bfa Commented Source}
+%D
+%D As usual, we use a prefix for buffers, \type{\getparameters} etc.:
+
+\writestatus{loading}{LilyPond module}
+
+\startmodule[lilypond]
+
+\unprotect
+
+\definesystemvariable{lily}
+
+%D Define the text snippets to be placed around fragments.
+%D Since LilyPond uses similar syntax to TeX, we must do some catcode fiddling.
+
+\bgroup
+
+\catcode`\/=\@@escape
+/catcode`/\=/@@other
+/catcode`/#=/@@other
+/catcode`/<=/@@begingroup
+/catcode`/>=/@@endgroup
+/catcode`/{=/@@other
+/catcode`/}=/@@other
+/catcode`/%=/@@other
+/catcode`/-=/@@letter
+
+/gdef/lily!fragmentprefix
+	</string^^J
+	 /string^^J
+	 {/string^^J
+	 % ly snippet contents follows:/string^^J
+	>
+
+/gdef/lily!fragmentsuffix
+	</string^^J
+	 % end ly snippet/string^^J
+	 }/string^^J
+	>
+
+/gdef/lily!prefix
+	</string^^J
+	 /string^^J
+	 #(ly:set-option (quote no-point-and-click))/string^^J
+	 #(ly:set-option (quote delete-intermediate-files))/string^^J
+	 /string^^J
+	 \version "2.12.0"/string^^J
+	 #(define version-seen? #t)/string^^J
+	 \layout {/string^^J
+	 /iflily!showempty/else
+	   % drop empty staves/string^^J
+	   \context { \RemoveEmptyStaffContext } % MUST come first/string^^J
+	   \context { \Score \override VerticalAxisGroup #'remove-first = ##t }/string^^J
+	 /fi
+	 /string^^J
+	 /unless/iflily!time
+	   % switch off time signature (i.e. only one line, no bars)/string^^J
+	   ragged-last = ##t/string^^J
+	   \context { \Score timing = ##f }/string^^J
+	   \context { \Staff \remove "Time_signature_engraver" }/string^^J
+	   /string^^J
+	 /fi
+	 /unless/iflily!barnumbers
+	   % switch off bar numbers/string^^J
+	   \context { \Score \remove "Bar_number_engraver" }/string^^J
+	 /fi
+	 /string^^J
+	 /unless/iflily!clef
+	   % switch off clef sign/string^^J
+	   \context { \Staff \remove "Clef_engraver" }/string^^J
+	 /fi
+	 /string^^J
+	 #(define fonts
+	   (make-pango-font-tree
+	   /@@lilyseriffont/space
+	   /@@lilysansfont/space
+	   /@@lilymonofont/space
+	 (/letterslash/space/@@lilystaffsize/space 20)))/string^^J
+	 /string^^J
+	 }/string^^J
+	 \paper {/string^^J
+	   #(define dump-extents #t)/string^^J
+	   ragged-right = /iflily!align ##f/else ##t/fi/string^^J
+	   indent = /withoutpt/the/lily!indent\pt/string^^J
+	   line-width = /withoutpt/the/lily!linewidth\pt/string^^J
+	   vsize = /withoutpt/the/lily!vsize\pt/string^^J
+	   printpagenumber = ##f/string^^J
+	   oddFooterMarkup=##f/string^^J
+	   oddHeaderMarkup=##f/string^^J
+	   bookTitleMarkup = ##f/string^^J
+	   scoreTitleMarkup = ##f/string^^J
+	   ragged-bottom=##t/string^^J
+	   ragged-last-bottom=##t/string^^J
+	   between-system-padding = #0/string^^J
+	   between-system-space = /withoutpt/the/lily!betweensystemspace\pt/string^^J
+	 }/string^^J
+	>
+
+/egroup
+
+%D Here, we define our parameters:
+
+\newdimen\lily!linewidth
+\newdimen\lily!vsize
+\newdimen\lily!indent
+\newdimen\lily!betweensystemspace
+\newif\iflily!showempty
+\newif\iflily!align
+\newif\iflily!clef
+\newif\iflily!time
+\newif\iflily!barnumbers
+
+\newcounter\lily!figures
+
+%D Again, as usual, there is a \type{\setuplilypond} command
+%D that accepts the same parameters as \type{\lilypond} and
+%D \type{\startlilypond} do in their optional argument.
+
+\def\setuplilypond
+	{\bgroup
+	 \catcode`\#=\@@other
+	 \dosingleempty\dosetuplilypond}
+
+\def\dosetuplilypond[#1]%
+	{\egroup
+	 \getparameters[\??lily][#1]}
+
+%D We set the following defaults:
+
+\setuplilypond
+	[staffsize=20,
+	 indent=0pt,
+	 betweensystemspace=54pt,
+	 time=\v!yes,
+	 clef=\v!yes,
+	 align=?,	% default depends on fragment=...
+	 fragment=\v!no,
+	 barnumbers=\v!no,
+	 showempty=\v!no,
+	 seriffont="TeX Gyre Schola", % LilyPond default font
+	 sansfont="LMSans10",
+	 monofont="LMTypewriter10",
+	 tmpdir={./lilytemp},
+	 imgdir={./lilypdfs}]
+%D
+%D If you want to know which fonts of your system LilyPond can see
+%D with which names, try \type{lilypond -dshow-available-fonts any}.
+%D (The 3rd parameter is necessary, but can be anything.)\par
+%D There are a lot of restrictions, e.g. no fonts from the \TeX\ tree (don't know why),
+%D only one face per font file etc.
+
+%D
+%D Check if temporary and image directories exist and create them if not:
+%D
+
+\def\tmpdir{\@@lilytmpdir} % for intermediate files
+\def\imgdir{\@@lilyimgdir} % for music PDFs
+
+\startluacode	
+	if not lfs.isdir("\tmpdir") then
+		logs.report("LilyPond Warn ", "Temporary directory not found, trying to make '\tmpdir'")
+		lfs.mkdir("\tmpdir")
+	end
+	if not lfs.isdir("\imgdir") then
+		logs.report("LilyPond Warn ", "Image directory not found, trying to make '\imgdir'")
+		lfs.mkdir("\imgdir")
+	end
+\stopluacode
+
+%D
+%D \type{\startlilypond} is a multistage implementation, because
+%D end-of-line characters must be treated specially in the
+%D \type{\startlilypond} \dots\ \type{\stoplilypond} range.
+%D
+
+\def\startlilypond
+	{\bgroup
+	 \catcode`\#=\@@other
+	 \dosingleempty\dostartlilypond}
+
+\def\dostartlilypond[#1]%
+	{\obeylines
+	 \dodostartlilypond[#1]}
+
+\long\def\dodostartlilypond[#1]#2\stoplilypond
+	{\egroup
+	 \bgroup
+%D
+%D The default of the \type{linewidth} parameter is the local \type{\hsize}.
+%D
+	 \setlocalhsize
+	 \getparameters[\??lily][linewidth=\the\localhsize,height=\the\textheight,#1]%
+	 \lily!linewidth\@@lilylinewidth
+	 \lily!vsize\@@lilyheight
+	 \lily!indent\@@lilyindent
+	 \lily!betweensystemspace\@@lilybetweensystemspace
+%D
+%D The default of \type{align} depends on whether we typeset a fragment:
+%D
+	 \doifelse\@@lilyalign\v!yes\lily!aligntrue\lily!alignfalse
+	 \doif\@@lilyfragment\v!no{\doif\@@lilyalign{?}\lily!aligntrue}%
+	 \doifelse\@@lilytime\v!yes\lily!timetrue\lily!timefalse
+	 \doifelse\@@lilybarnumbers\v!yes\lily!barnumberstrue\lily!barnumbersfalse
+	 \doifelse\@@lilyshowempty\v!yes\lily!showemptytrue\lily!showemptyfalse
+	 \doifelse\@@lilyclef\v!yes\lily!cleftrue\lily!cleffalse
+%D
+%D We are using a counter to keep the different LilyPond pieces
+%D separate. This allows to typeset them only once, during the
+%D first run.
+%D
+%D TODO: This won't work any longer once we pass the remaining
+%D vertical space to LilyPond.
+%D
+	 \doglobal\increment\lily!figures
+	 \edef\lily!filename{\bufferprefix lilypond-\lily!figures}%
+	 \edef\lily!tmpfilename{\tmpdir/\lily!filename.tmp}%
+	 \edef\lily!img{\imgdir/\lily!filename.pdf}
+	 \def\obeyedlines{\string^^J}%
+	 \convertargument#2\to\ascii
+	 \startexpanded
+	   \noexpand\setbuffer[\lily!tmpfilename]%
+	   \lily!prefix
+	   \letterhash(set-global-staff-size \getvalue{\??lily staffsize})\string^^J%
+	   \ifdefined\@@lilyfragment\lily!fragmentprefix\fi
+%D TODO: Option \quote{packed}
+	   \ascii
+	   \ifdefined\@@lilyfragment\lily!fragmentsuffix\fi
+	   \noexpand\endbuffer
+	 \stopexpanded
+%D
+%D In \LUATEX\ buffers are kept in memory
+%D in contrast to older flavours of \TeX\ where they're written to a
+%D file automatically. We have to require writing to a file explicitely
+%D with \type{\savebuffer}.
+%D
+	\writestatus{LilyPond}{\lily!filename}
+	\startluacode
+		buffers.save('\lily!tmpfilename')
+		if not lfs.isfile('\lily!tmpfilename') then
+			logs.report("LilyPond ERROR", "File '\lily!tmpfilename' was not written!")
+		end
+%D
+%D Generating a PDF directly previously created always a whole page, so we generate EPS first.
+%D In recent versions of LilyPond that gets converted to PDF immediately, but we check for that.
+%D
+%D It would be nice, if \type{-ddelete-intermediate-files} would delete all useless intermediate files.
+%D It would be even better, if mtxrun wouldn't declare non-existing files as \quotation{unchanged}. (Is that fixed now?)
+%D
+%D Remember: More possible options in \type{lily.scm}.
+%D
+		os.execute('mtxrun --ifchanged="\lily!tmpfilename" --exec bin:lilypond -dbackend=eps -dno-gs-load-fonts -dinclude-eps-fonts -ddelete-intermediate-files -o"\tmpdir/\lily!filename" "\lily!tmpfilename"')
+		if not lfs.isfile('\tmpdir/\lily!filename.pdf') then
+			os.execute('mtxrun --ifchanged="\tmpdir/\lily!filename.eps" --exec bin:pstopdf "\tmpdir/\lily!filename.eps"')
+		end
+%D At least on Windows, Lua's \type{os.rename} won't overwrite existing files, so we need to remove them before.
+		if lfs.isfile('\lily!img') and lfs.isfile('\tmpdir/\lily!filename.pdf') then
+			os.remove('\lily!img')
+		end
+		os.rename('\tmpdir/\lily!filename.pdf', '\lily!img')
+	\stopluacode
+%D
+%D TODO: Get the relevant dimension directly from LilyPond,
+%D to place the instrument name into the left margin for
+%D short snippets as well. (Is that possible at all?)
+%D
+%D If we are not in the middle of some text, we have to check
+%D whether LilyPond created an image that is wider than requested:
+%D It places the instrument names in the left margin.
+%D
+	 \ifvmode
+	   \getfiguredimensions[\lily!img]%
+	   \leavevmode
+	   \!!dimenb\figurewidth
+	   \ifdim\!!dimenb>\localhsize
+	     \!!dimena=\localhsize
+	     \advance\!!dimena-\!!dimenb
+	     \noindent\hskip\!!dimena
+	   \fi
+	 \fi
+	 \externalfigure[\lily!img]%
+	 \egroup}
+
+%D For short snippets, we define an inline alternative to
+%D our start/stop pair:
+
+\def\lilypond        {\dosingleempty\dolilypond}
+\def\dolilypond[#1]#2{\startlilypond[#1]#2\stoplilypond}
+
+\stopmodule
+
+\protect \doifnotmode{demo}{\endinput}
+
+
+%D End of file.
+%D
+%D Here follows a sample. (\type{context t-lilypond --mode=demo})
+
+\starttext
+
+\startbuffer[sample]
+\subject{Telemann, TWV 40:11}
+\startlilypond
+	\relative c' {
+		\set Staff.instrumentName = flute
+		\key fis \minor
+		\time 3/4
+		\partial 4
+		r8 fis'8 | fis4. cis8 a cis | fis, a cis fis a fis |
+		b, d fis b d b | eis,, gis cis eis gis b, |
+		a fis' gis, fis' cis eis | fis,4 r8
+		a' gis fis | e gis, a e' fis cis |
+		d fis, gis b e d | cis4 \trill r8
+		cis b a | b dis e gis cis, b |
+		a e' dis fis b, a | gis4 \trill r8
+	}
+\stoplilypond
+\stopbuffer
+
+The input
+\typebuffer[sample]
+is typeset as
+\getbuffer[sample]
+
+\type{\startlilypond} accepts options, as in\crlf
+\type{\startlilypond[staffsize=18, linewidth=14cm, indent=5cm, time=no, clef=no]}:
+\nobreak
+\startlilypond[staffsize=18,linewidth=14cm,indent=5cm,time=no,clef=no]
+	\relative c' {
+		\key fis \minor
+		\time 3/4
+		\partial 4
+		r8 fis'8 | fis4. cis8 a cis | fis, a cis fis a fis |
+		b, d fis b d b | eis,, gis cis eis gis b, |
+		a fis' gis, fis' cis eis | fis,4 r8
+		a' gis fis | e gis, a e' fis cis |
+		d fis, gis b e d | cis4 \trill r8
+		cis b a | b dis e gis cis, b |
+		a e' dis fis b, a | gis4 \trill r8
+	}
+\stoplilypond
+
+It is also possible to mix text and music:
+\lower 8.2pt\hbox{\lilypond[fragment=true,staffsize=16,time=no,clef=no]{g'}} is a g.
+
+TODO: The \type{\lower} in the example above should not be necessary.
+
+\subject{Starlight (round)}
+
+Here is a sample with lyrics:
+
+\startlilypond
+<<
+\context Staff = onlyone <<
+	\clef treble
+	\key a \major
+	\time 6/8
+	\context Voice = one {
+		\relative c'' {
+			a4.^\markup{1.} e' |
+			e8( d cis) b4. |
+			e4.^\markup{2.} d4 d8 |
+			cis( b) a b4 e,8 |
+			a4 a8 gis( a) b |
+			cis4 cis8 b( cis d) |
+			cis( d) e e4 e,8 |
+			fis4 fis8 gis4.
+			\bar ":|"
+		}
+	}
+>>
+\lyricsto one \new Lyrics {
+	\lyricmode {
+		Star -- light, star -- bright,
+		first star I see to -- night;
+		I wish I may, I wish I might
+		have the wish I wish to -- night.
+	}
+}
+>>
+
+\stoplilypond
+
+\stoptext
