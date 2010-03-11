@@ -2,3 +2,11 @@
 *.tmp
 *.tu?
 *.bak
+*.zip
+*.jpg
+.project
+.pydevproject
+.texlipse
+t-lily-old/
+lilypdfs/
+lilytemp/
