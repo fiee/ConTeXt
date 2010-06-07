@@ -292,12 +292,13 @@
 %D Generating a PDF directly previously created always a whole page, so we generate EPS first.
 %D In recent versions of LilyPond that gets converted to PDF immediately, but we check for that.
 %D
-%D It would be nice, if \type{-ddelete-intermediate-files} would delete all useless intermediate files.
+%D It would be nice, if \type{-ddelete-intermediate-files} would delete all useless intermediate files
+%D that were made for \LATEX-based \type{lilypond-book}, but \type{-dno-aux-files} is needed for that.
 %D It would be even better, if mtxrun wouldn't declare non-existing files as \quotation{unchanged}. (Is that fixed now?)
 %D
 %D Remember: More possible options in \type{lily.scm}.
 %D
-		os.execute('mtxrun --ifchanged="\lily!tmpfilename" --exec bin:lilypond -dbackend=eps -dno-gs-load-fonts -dinclude-eps-fonts -ddelete-intermediate-files -o"\tmpdir/\lily!filename" "\lily!tmpfilename"')
+		os.execute('mtxrun --ifchanged="\lily!tmpfilename" --exec bin:lilypond -dbackend=eps -dno-gs-load-fonts -dinclude-eps-fonts -ddelete-intermediate-files -dno-aux-files -o"\tmpdir/\lily!filename" "\lily!tmpfilename"')
 		if not lfs.isfile('\tmpdir/\lily!filename.pdf') then
 			os.execute('mtxrun --ifchanged="\tmpdir/\lily!filename.eps" --exec bin:pstopdf "\tmpdir/\lily!filename.eps"')
 		end
