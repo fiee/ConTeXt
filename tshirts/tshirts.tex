@@ -1,0 +1,41 @@
+\usesymbols[cow]
+\setupsymbolset[cownormal]
+
+\usetypescript[antykwa-torunska-cond]
+\setupbodyfont[antykwa,rm,20mm]
+
+% Dodo from http://upload.wikimedia.org/wikipedia/commons/b/bf/Dodo_%28PSF%29.png
+
+\starttext
+
+\startTEXpage[align={middle,middle},width=210mm,height=297mm]
+
+\dontleavehmode\scale[width=\textwidth]{\symbol[CowConTeXt]}
+
+Cowboy Coder
+
+\stopTEXpage
+
+
+\startTEXpage[align={middle,middle},width=210mm,height=297mm]
+I \tex{dodo} \CONTEXT
+
+\dontleavehmode
+\externalfigure[img/dodo][height=0.66\textheight]
+
+\stopTEXpage
+
+
+\startTEXpage[align={middle,middle},width=210mm,height=297mm]
+save the \tex{dodo}
+
+\dontleavehmode
+\externalfigure[img/dodo][height=0.66\textheight]
+
+use \CONTEXT
+
+\stopTEXpage
+
+
+
+\stoptext
