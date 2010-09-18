@@ -1,0 +1,36 @@
+\usemodule[diagramm]
+
+\setupcolors[state=start]
+
+\starttext
+
+\startTEXpage[offset=1ex]
+\startlinechart
+
+  \xrange[min=0,max=5]
+  \yrange[min=0,max=5]
+
+  \xaxis[min=1,max=5]
+  \yaxis[min=0,max=5]
+
+  \startdata
+    \startseries[color=blue]
+      \point[y=4]
+      \point[y=2]
+      \point[y=4]
+      \point[y=5]
+      \point[y=3]
+    \stopseries
+    \startseries[color=red]
+      \point[y=5]
+      \point[y=3]
+      \point[y=3]
+      \point[y=2]
+      \point[y=4]
+    \stopseries
+  \stopdata
+
+\stoplinechart
+\stopTEXpage
+
+\stoptext

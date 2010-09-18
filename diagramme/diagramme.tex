@@ -1,0 +1,195 @@
+\usemodule[diagramm]
+
+\setupcolors[state=start]
+
+\setuphead[section][page=yes]
+
+\setuplayout
+  [header=0pt,
+   footer=0pt]
+
+\starttext
+
+\section{Bar Chart}
+
+\startbuffer
+\startbarchart[grid=no]
+
+  \xrange[min=0,max=5]
+  \yrange[min=0,max=6]
+
+%  \xaxis[min=0,max=5]
+%  \yaxis[min=0,max=6]
+
+  \startdata
+    \startseries[color=lightgreen]
+      \point[y=4]
+      \point[y=2]
+      \point[y=6]
+      \point[y=5]
+      \point[y=3]
+    \stopseries
+    \startseries[color=lightblue]
+      \point[y=2]
+      \point[y=5]
+      \point[y=4]
+      \point[y=3.5]
+      \point[y=6]
+    \stopseries
+  \stopdata
+
+\stopbarchart
+\stopbuffer
+
+\typebuffer
+
+\placefigure
+  {Säulendiagramm}
+  {\getbuffer}
+
+\section{Ring Chart}
+
+\startbuffer
+\startringchart
+  \startdata
+    \startseries
+      \point[y=12,color=red]
+      \point[y=7,color=blue]
+      \point[y=6,color=green]
+      \point[y=8,color=yellow]
+    \stopseries
+  \stopdata
+\stopringchart
+\stopbuffer
+
+\typebuffer
+
+\placefigure
+  {Ringdiagramm}
+  {\getbuffer}
+
+\section{Pie Chart}
+
+\startbuffer
+\startpiechart[alternative=b]
+  \startdata
+    \startseries
+      \point[y=12,color=red]
+      \point[y=7,color=blue]
+      \point[y=6,color=green]
+      \point[y=8,color=yellow]
+    \stopseries
+  \stopdata
+\stoppiechart
+\stopbuffer
+
+\typebuffer
+
+\placefigure
+  {Kreisdiagramm}
+  {\getbuffer}
+
+\section{Spider Chart}
+
+\startbuffer
+\startspiderchart[alternative=a]
+  \startdata
+    \startseries[color=blue]
+      \point[y=4]
+      \point[y=2]
+      \point[y=4]
+      \point[y=5]
+      \point[y=3]
+    \stopseries
+    \startseries[color=red]
+      \point[y=5]
+      \point[y=3]
+      \point[y=3]
+      \point[y=2]
+      \point[y=4]
+    \stopseries
+  \stopdata
+\stopspiderchart
+\stopbuffer
+
+\typebuffer
+
+\placefigure
+  {Spiderdiagramm}
+  {\getbuffer}
+
+\section{Line Chart}
+
+\startbuffer
+\startlinechart[grid=no]
+
+  \xrange[min=0,max=5]
+  \yrange[min=0,max=5]
+
+  \xaxis[min=1,max=5]
+  \yaxis[min=0,max=5]
+
+  \startdata
+    \startseries[color=blue]
+      \point[y=4]
+      \point[y=2]
+      \point[y=4]
+      \point[y=5]
+      \point[y=3]
+    \stopseries
+    \startseries[color=red]
+      \point[y=5]
+      \point[y=3]
+      \point[y=3]
+      \point[y=2]
+      \point[y=4]
+    \stopseries
+  \stopdata
+
+\stoplinechart
+\stopbuffer
+
+\typebuffer
+
+\placefigure
+  {Liniendiagramm}
+  {\getbuffer}
+
+\section{Marker Data}
+
+\startbuffer
+\startmarkerdata
+
+  \xrange[min=0,max=5]
+  \yrange[min=0,max=5]
+
+  \xaxis[min=0,max=6]
+  \yaxis[min=0,max=6]
+
+  \startdata
+    \startseries[color=blue]
+      \point[y=4]
+      \point[y=2]
+      \point[y=4]
+      \point[y=5]
+      \point[y=3]
+    \stopseries
+    \startseries[color=red]
+      \point[y=5]
+      \point[y=3]
+      \point[y=3]
+      \point[y=2]
+      \point[y=4]
+    \stopseries
+  \stopdata
+
+\stopmarkerdata
+\stopbuffer
+
+\typebuffer
+
+\placefigure
+  {Punktdiagramm}
+  {\getbuffer}
+
+\stoptext

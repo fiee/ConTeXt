@@ -1,0 +1,39 @@
+\usemodule[diagramm]
+
+\setuplayout[width=12cm]
+
+\starttext
+
+\startmarkerdata[width=\textwidth,height=\textwidth]
+
+  \xrange[min=1,max=100]
+  \yrange[min=1,max=100]
+
+  \xaxis[min=-10,max=110]
+  \yaxis[min=-10,max=110]
+
+  \ctxlua{thirddata.diagramm.setup.xaxis = true  }
+  \ctxlua{thirddata.diagramm.setup.xtick = false }
+  \ctxlua{thirddata.diagramm.setup.yaxis = true  }
+  \ctxlua{thirddata.diagramm.setup.ytick = false }
+
+  \ctxlua{thirddata.diagramm.axis.y.step = 10    }
+  \ctxlua{thirddata.diagramm.axis.x.step = 10    }
+
+  \startdata
+    \startseries
+
+    \startlua
+    for i=1,100 do
+        for j=1,100 do
+            thirddata.diagramm.point(1,math.random(1,100),math.random(1,100),"black")
+        end
+    end
+    \stoplua
+
+    \stopseries
+  \stopdata
+
+\stopmarkerdata
+
+\stoptext

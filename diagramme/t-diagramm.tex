@@ -1,0 +1,293 @@
+%D \module
+%D   [       file=t-diagramm,
+%D        version=2009.01.23, % 2008.09.22
+%D          title=\CONTEXT\ User Module,
+%D       subtitle=Diagramme,
+%D         author=Wolfgang Schuster,
+%D           date=\currentdate,
+%D      copyright=Wolfgang Schuster,
+%D        license=Public Domain]
+
+%M \enableregime[utf]
+
+\writestatus{loading}{Context User Module / Diagramme}
+
+\unprotect
+
+\startinterface all
+  \setinterfaceconstant {innercircle} {innercircle}
+  \setinterfaceconstant {outercircle} {outercircle}
+  \setinterfaceconstant {grid}        {grid}
+  \setinterfaceconstant {log}         {log}
+\stopinterface
+
+\startinterface all
+  \setinterfacevariable {diagramm}    {diagramm}
+  \setinterfacevariable {barchart}    {barchart}
+  \setinterfacevariable {ringchart}   {ringchart}
+  \setinterfacevariable {piechart}    {piechart}
+  \setinterfacevariable {spiderchart} {spiderchart}
+  \setinterfacevariable {linechart}   {linechart}
+  \setinterfacevariable {markerdata}  {markerdata}
+  \setinterfacevariable {true}        {true}
+  \setinterfacevariable {false}       {false}
+\stopinterface
+
+\def\????dm{@@@@dm} % Diagramme
+\def\????dg{@@@@dg} % Diagramm
+\def\????pt{@@@@pt} % Point
+
+\newcount\diagramm!series
+\newcount\diagramm!points
+
+\newdimen\diagrammwidth
+\newdimen\diagrammheight
+\newdimen\innercircle
+\newdimen\outercircle
+
+\def\diagrammvalue#1%
+  {\csname\????dg\currentdiagramm#1\endcsname}
+
+%D \macros
+%D   {diacatcodes}
+%D
+%D Die \type {\diacatcodes} Tabelle dient dazu, das Kommentarzeichen innerhalb
+%D der Befehle zur Konfiguration der Achsen auf \mono {letter} zu setzen, damit
+%D die Formatierung der Zahlen innerhalb des \LUA\ Teils geändert werden kann
+%D ohne des Kommentarzeichen erst zu deaktivieren (d.\,h. mittels \type {\%}
+%D oder \type {\letterpercent}).
+
+\newcatcodetable \diacatcodes
+
+\startcatcodetable \diacatcodes
+    \catcode`\^^M =  5
+    \catcode`\    = 10
+    \catcode`\\   =  0
+    \catcode`\{   =  1
+    \catcode`\}   =  2
+    \catcode`\%   = 11
+    \catcode`\!   = 11
+    \catcode`\?   = 11
+\stopcatcodetable
+
+%D \macros
+%D   {startdiagramm,stopdiagramm}
+%D
+%D Diagramme werden innerhalb der Diagramm||Umgebung gesetzt, der erste
+%D Parameter ist der Name des Diagrammtyp und zwingend notwendig, der
+%D zweite Parameter kann benutzt werden um lokale Einstellungen vorzunehmen.
+%D
+%D In Dokumenten bietet es sich an anstatt der Diagramm||Umgebung die
+%D mit \type {\definediagramm} erstellte Umgebung zu verwenden.
+
+\def\dostartdiagramm[#1][#2]%
+  {\bgroup
+   \ifsecondargument
+     \setupdiagramm[#1][#2]%
+   \fi
+   \edef\currentdiagramm{\csname\????dg#1\c!type\endcsname}%
+   \diagrammwidth =\diagrammvalue\c!width      \relax
+   \diagrammheight=\diagrammvalue\c!height     \relax
+   \outercircle   =\diagrammvalue\c!outercircle\relax
+   \innercircle   =\diagrammvalue\c!innercircle\relax
+   \ctxlua{thirddata.diagramm.initialization()}%
+   \ctxlua{thirddata.diagramm.setup = { alternative = "\diagrammvalue\c!alternative", grid = "\diagrammvalue\c!grid" }}}
+
+\def\dostopdiagramm
+  {\startMPcode
+   \ctxlua{thirddata.diagramm.drawchart("\currentdiagramm")}%
+   \stopMPcode
+   \egroup}
+
+%D \macros
+%D   {startdata,stopdata}
+%D
+%D Datenblock, setzte aller Zähler zurück.
+
+\def\startdata
+  {\global\diagramm!series\zerocount
+   \global\diagramm!points\zerocount
+   \ctxlua{thirddata.diagramm.data = { }}%
+   \def\point{\dosingleargument\diagrammpoint}}
+
+\let\stopdata\relax
+
+%D \macros
+%D   {startseries,stopseries}
+%D
+%D Datenserie, erhöhe den Zähler für die Serie um eins und setze den Zähler
+%D für den Datenwert zurück.
+
+\def\startseries
+  {\dosingleempty\dostartseries}
+
+\def\dostartseries[#1]%
+  {\bgroup
+   \getparameters[\????pt][\c!color=\diagrammvalue\c!color,#1]%
+   \global\diagramm!points\zerocount
+   \global\advance\diagramm!series\plusone
+   \ctxlua{thirddata.diagramm.series(\number\diagramm!series)}}
+
+\def\stopseries
+  {\egroup}
+
+%D \macros
+%D   {point,diagrammpoint}
+%D
+%D Datenwert, speichert die Werte in einer Tabelle zur späteren Nutzung ab.
+%D Um Konflikte mit anderen Makros zu vermeiden wird die Kuzform \type {\point}
+%D nur innerhalb des Diagrammes definiert.
+
+\def\diagrammpoint[#1]%
+  {\bgroup
+   \global\advance\diagramm!points\plusone
+   \getparameters[\????pt][\c!y=1,#1]%
+   \ctxlua{thirddata.diagramm.point(\number\diagramm!series,\number\diagramm!points,\@@@@pty,"\@@@@ptcolor")}%
+   \egroup}
+
+%D \macros
+%D   {definediagramm}
+%D
+%D Neue Diagrammtypen werden mit den \type {\definediagramm} Befehl erstellt,
+%D dabei werden einzelne Werte bereits mit Vorgaben besetzt, die vom Benutzer
+%D geändert werden können.
+%D
+%D Zusätzlich wird eine eigene Umgebung für den Diagrammtyp erstellt,
+%D welcher einen optionalen Parameter für Einstellungen bietet.
+
+\def\definediagramm
+  {\dodoubleempty\dodefinediagramm}
+
+\def\dodefinediagramm[#1][#2]%
+  {\setupdiagramm
+     [#1]
+     [\c!type=\v!barchart, % default for \startdiagramm
+      \c!width=\@@@@dmwidth,
+      \c!height=\@@@@dmheight,
+      \c!outercircle=\@@@@dmoutercircle,
+      \c!innercircle=\@@@@dminnercircle,
+      \c!color=\@@@@dmcolor,
+      \c!background=\@@@@dmbackground,
+      \c!backgroundscreen=\@@@@dmbackgroundscreen,
+      \c!backgroundcolor=\@@@@dmbackgroundcolor,
+      \c!alternative=\@@@@dmalternative,
+      \c!format=\@@@@dmformat,
+      \c!grid=\@@@@dmgrid,
+      \c!frame=\@@@@dmframe,
+      #2]%
+   %\setvalue{\e!setup#1\e!endsetup}{\setupdiagramm[#1]}%
+   \setvalue{\e!start#1}{\dodoubleempty\dostartdiagramm[#1]}%
+   \setvalue{\e!stop #1}{\dostopdiagramm}}
+
+%D \macros
+%D   {setupdiagramm,setupdiagramme}
+%D
+%D Die Einstellungen für die einzelnen Diagrammtypen können mittels
+%D des \type {\setupdiagramm} Befehl konfiguriert werden, um Werte für
+%D alle verschiedenen Typen gleichzeitig zu setzen kann der
+%D \type {\setupdiagramme} Befehl verwendet werden.
+
+\def\setupdiagramm
+  {\dodoubleargument\dosetupdiagramm}
+
+\def\dosetupdiagramm[#1][#2]%
+  {\getparameters[\????dg#1][#2]}
+
+\def\setupdiagramme
+  {\dodoubleargument\getparameters[\????dm]}
+
+%D \macros
+%D   {xrange,yrange}
+%D
+%D Range
+
+\def\????ra{@@@@ra}
+
+\def\xrange[#1]%
+  {\getparameters[\????ra\c!x][#1]%
+   \ctxlua{thirddata.diagramm.xrange("\@@@@raxmin","\@@@@raxmax")}}
+
+\def\yrange[#1]%
+  {\getparameters[\????ra\c!y][#1]%
+   \ctxlua{thirddata.diagramm.yrange("\@@@@raymin","\@@@@raymax")}}
+
+%D \macros
+%D   {xaxis,yaxis,setupaxis}
+%D
+%D Achsen
+
+\def\????ax{@@@@ax}
+
+\def\xaxis
+  {\pushcatcodetable
+   \setcatcodetable\diacatcodes
+   \doxaxis}
+
+\def\doxaxis[#1]%
+  {\getparameters[\????ax\c!x][#1]%
+   \popcatcodetable
+   \ctxlua{thirddata.diagramm.xaxis("\@@@@axxmin","\@@@@axxmax")}%
+   \ctxlua{thirddata.diagramm.setup.xaxis   = true              }%
+   \ctxlua{thirddata.diagramm.setup.xtick   = true              }%
+   \ctxlua{thirddata.diagramm.axis.x.log    = \@@@@axxlog       }%
+   \ctxlua{thirddata.diagramm.axis.x.format = "\@@@@axxformat"  }}
+
+\def\yaxis
+  {\pushcatcodetable
+   \setcatcodetable\diacatcodes
+   \doyaxis}
+
+\def\doyaxis[#1]%
+  {\getparameters[\????ax\c!y][#1]%
+   \popcatcodetable
+   \ctxlua{thirddata.diagramm.yaxis("\@@@@axymin","\@@@@axymax")}%
+   \ctxlua{thirddata.diagramm.setup.yaxis   = true              }%
+   \ctxlua{thirddata.diagramm.setup.ytick   = true              }%
+   \ctxlua{thirddata.diagramm.axis.y.log    = \@@@@axylog       }%
+   \ctxlua{thirddata.diagramm.axis.y.format = "\@@@@axyformat"  }}
+
+\def\setupaxis
+  {\pushcatcodetable
+   \setcatcodetable\diacatcodes
+   \dodoubleargument\dosetupaxis}
+
+\def\dosetupaxis[#1][#2]%
+  {\def\docommand##1{\getparameters[\????ax##1][#2]}%
+   \popcatcodetable
+   \processcommalist[#1]\docommand}
+
+\setupaxis
+  [\c!x,\c!y]
+  [\c!log=\v!false,
+   \c!format=%d]
+
+%D Für alle Diagramme werden einige Einstellungen vorgenommen,
+%D die vom Benutzer innerhalb des Dokumentes geändert werden können.
+
+\setupdiagramme
+  [\c!width=.6\textwidth,
+   \c!height=.4\textwidth,
+   \c!outercircle=\dimexpr\diagrammvalue\c!height\relax,
+   \c!innercircle=\dimexpr\diagrammvalue\c!outercircle*3/4\relax,
+   \c!color=\s!black,
+   \c!background=,
+   \c!backgroundscreen=,
+   \c!backgroundcolor=,
+   \c!alternative=\v!a,
+   \c!format=\v!tex,
+   \c!grid=\v!no,
+   \c!frame=\v!off]
+
+%D Erstellen der einzelnen Diagrammtypen
+
+\definediagramm[\v!diagramm   ]
+\definediagramm[\v!barchart   ][\c!type=\v!barchart   ]
+\definediagramm[\v!piechart   ][\c!type=\v!piechart   ]
+\definediagramm[\v!ringchart  ][\c!type=\v!ringchart  ]
+\definediagramm[\v!spiderchart][\c!type=\v!spiderchart]
+\definediagramm[\v!linechart  ][\c!type=\v!linechart  ]
+\definediagramm[\v!markerdata ][\c!type=\v!markerdata ]
+
+\ctxloadluafile{t-diagramm}{}
+
+\protect \endinput

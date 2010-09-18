@@ -1,0 +1,45 @@
+\usemodule[diagramm]
+
+\setupcolors[state=start]
+
+\setupdiagramme
+  [width=15cm,
+   height=12cm]
+
+\starttext
+
+\startTEXpage[offset=1cm]
+
+\startdiagramm[type=linechart,grid=no]
+
+  \xrange[min=0,max=5]
+  \yrange[min=0,max=1000]
+
+  \xaxis[min=1,max=6]
+  \yaxis[min=0,max=1000,log=true]
+
+  \ctxlua{thirddata.diagramm.axis.y.step    = 100}
+  \ctxlua{thirddata.diagramm.axis.y.minstep = 10}
+
+  \startdata
+    \startseries[color=blue]
+      \point[y=4]
+      \point[y=2]
+      \point[y=4]
+      \point[y=5]
+      \point[y=3]
+    \stopseries
+    \startseries[color=red]
+      \point[y=5]
+      \point[y=3]
+      \point[y=3]
+      \point[y=2]
+      \point[y=4]
+    \stopseries
+  \stopdata
+
+\stopdiagramm
+
+\stopTEXpage
+
+\stoptext
