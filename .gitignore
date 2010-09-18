@@ -4,9 +4,13 @@
 *.bak
 *.zip
 *.jpg
+*.mp
 .project
 .pydevproject
 .texlipse
 t-lily-old/
 lilypdfs/
 lilytemp/
+myletter.pdf
+tshirts/tshirts.pdf
+
