@@ -1,21 +1,22 @@
 %D \module
 %D    [          file=t-lilypond,
-%D            version=2010.03.11,
+%D            version=2010.10.18 Brejlov release,
 %D              title=\CONTEXT\ User Modules,
 %D           subtitle=LilyPond Bridge (Music Typesetting),
 %D             author={Christopher Creutzig, H. Ramm et al.}, % with contributions by Mojca Miklavec and Wolfgang Schuster
 %D		   maintainer={Henning Hraban Ramm, hraban@fiee.net},
 %D               date=\currentdate,
-%D          copyright=the authors]
-%C
-%C This module is licensed under the GNU GPL V2.
+%D          copyright=the authors,
+%D			  license=GNU GPL v2]
+
+%M \usemodule[lilypond]
 
 %D This module serves to include LilyPond music directly in the
 %D \CONTEXT\ source, just as \METAPOST\ code can be.
 %D
 %D It is supposed to work only with LilyPond's stable version 2.12 and \CONTEXT\ MkIV i.\,e. \LUATEX.
 %D
-%D {\bfa Complete list of options:}
+%D \subject{Complete list of options}
 %D
 %D \starttabulate[|l|l|l|]
 %D    \NC option\NC default\NC comment\NC\NR
@@ -38,7 +39,7 @@
 %D    \NC imgdir\NC ./lilypdfs \NC directory for image files (note PDFs) \NC\NR
 %D \stoptabulate
 %D
-%D {\bfa Todo list}
+%D \subject{Todo list}
 %D
 %D \startitemize[packed,joinedup]
 %D \item Proper support for multipage results.
@@ -47,7 +48,7 @@
 %D \item Work with existing PDFs on systems where LilyPond isn't installed.
 %D \stopitemize
 %D
-%D {\bfa Commented Source}
+%D \subject{Commented Source}
 %D
 %D As usual, we use a prefix for buffers, \type{\getparameters} etc.:
 
