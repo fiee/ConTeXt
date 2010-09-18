@@ -1,0 +1,140 @@
+\mainlanguage[de]
+\usemodule[letter]
+
+\setuptabulate[distance=0pt]
+
+\setupletter[
+	% Recipient
+	toname={Wolfgang Schuster},
+	toaddress={Mlýn Brejlov\\Ceska Republika},
+	% Sender address in envelope window
+	backaddress={fieé visuelle · H.\,Ramm · 8274 Tägerwilen · Schweiz}
+]
+
+% Use the sender address line, but not the default subject line
+\setupletterstyle[backaddress=yes,reference=no]
+
+% We put our logo in the head
+\setupletterstyle[head,nexthead][
+	hoffset=0.66\paperwidth,
+	voffset=0pt,
+	alternative=fiee,
+]
+
+% Define logo for the first page
+\defineletterelement[head][fiee]{%
+\externalfigure[logo][height=2cm, width=6cm]
+
+{\definedfont[SerifItalic at 36pt] fiee visuelle}
+}
+
+% Other logo for subsequent (right) pages
+\defineletterelement[nexthead][fiee]{%
+\externalfigure[logo][height=2cm, width=6cm]}
+
+\setupletterstyle[nexthead][
+	state=right,
+]
+
+% We don't really use this
+\copyletterelement[location][fiee][reference][d]
+
+\setupletterstyle[location][
+	hoffset=0.66\paperwidth,
+	voffset=3cm,
+	alternative=fiee,
+	list={name,street,city,phone,email,web,skype}
+]
+
+\setupletter[
+	name={Henning Hraban Ramm},
+	street={Meierhofstrasse 11},
+	city={CH-8274 Tägerwilen},
+	phone={+41 71 6712494},
+	email={hraban@fiee.net},
+	web={www.fiee.net},
+	skype={fiee.visuelle}
+]
+% First try
+%\setupletter[name,street,city,phone,email,web,skype][separator={:}]
+
+% center around the :
+\startsetups letter:location
+\tfx\it
+\starttabulate[|rw(5em)a{{\tf~:}}|p|]
+	\NC personale \NC \lettervalue{name} \NC\NR
+	\NC locale \NC\lettervalue{street}\\\lettervalue{city}\NC\NR
+	\NC telephone \NC \lettervalue{phone} \NC\NR
+	\NC virtuelle \NC \lettervalue{email}\\\lettervalue{web} \NC\NR
+	\NC skype \NC \lettervalue{skype} \NC\NR
+\stoptabulate
+\stopsetups
+
+
+\setupletterstyle[address][alternative=fiee]
+% Our own recipient setup without too much space before the address
+\defineletterelement[address][fiee]{
+\setupinterlinespace
+\blank
+\lettervalue{toname}\\
+\lettervalue{toaddress}
+}
+
+% Subject and date on the same line, date below logo
+\startsetups letter:subject
+\bTABLE[frame=off]
+	\bTR
+		\bTD[width=\dimexpr.66\paperwidth-\backspace\relax]\lettervalue{subject}\eTD
+		\bTD{\tf\lettervalue{date}}\eTD
+	\eTR
+\eTABLE
+\stopsetups
+
+% account information at the foot, below the logo
+\defineletterelement[foot][fiee]{
+\tfx\it
+	\starttabulate[|rw(5em)a{{\tf~:}}|p|]
+		\NC Deutschland \NC Kto. 247\,354\,704\\BLZ 600\,100\,70 \NC\NR
+		\NC Schweiz \NC Postkonto 70-123-1 \NC\NR
+	\stoptabulate
+	\crlf
+}
+
+\setupletterstyle[foot][
+	preset=leftbottom,
+	hoffset=0.66\paperwidth,
+	voffset=2cm,
+	alternative=fiee,
+]
+
+% switch off reference line
+\setupletterstyle[reference][alternative=none]
+
+% Move the text a bit up
+\setupletterstyle[firstpage][
+	topspace=10cm
+]
+
+% Adjust text start on subsequent pages
+\setupletterstyle[secondpage][
+	topspace=3cm,
+]
+
+% Move marks to the paper rim (won't print on most printers)
+\setupletterstyle[topmark,botmark,cutmark][
+	hoffset=0mm
+]
+
+\starttext
+%\showframe
+
+\startletter[subject={Es geht um die Wurst}]
+
+\dorecurse{10}{
+\input knuth
+
+}
+
+\stopletter
+
+\stoptext
