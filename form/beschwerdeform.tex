@@ -1,0 +1,205 @@
+\mainlanguage[de]
+\setupbodyfont[helvetica,ss,7pt]
+\setuppagenumbering[state=stop]
+\setupinteraction[state=start]
+\setuplayout[
+  backspace=1cm,
+  width=190mm,
+  topspace=1cm,
+  height=270mm,
+  header=0mm,
+  footer=0mm,
+]
+
+\setupTABLE[height=1cm,option=stretch]
+
+\setupfields[
+  option=printable,
+  frame=off,
+  height=1.25em,
+  offset=0mm,frameoffset=0mm,
+  align=bottom,
+  style=bold,
+]
+
+\setupfield[MMlongString][reset,horizontal][width=\textwidth,frame=off,]
+\setupfield[MMmediumString][reset,horizontal][width=0.6\textwidth,frame=off,]
+\setupfield[MMshortString][reset,horizontal][width=0.2\textwidth,frame=off,]
+\setupfield[MMcheck][frame=on,height=1em,width=1em,align=bottom,offset=0mm,frameoffset=0mm]
+\setupfield[MMtextfield][reset,horizontal][width=0.6\textwidth,height=12.5em,frame=off,]
+\setupfield[MMwidetextfield][reset,horizontal][width=\textwidth,height=12.5em,frame=off,]
+
+\definefield[NicknameTop][line][MMshortString][][]
+\definefield[VillageTop][line][MMshortString][][]
+\definefield[DECTTop][line][MMshortString][][]
+\definefield[CaravanTop][line][MMshortString][][]
+\definefield[PlanQTop][line][MMshortString][][]
+
+\definefield[Nickname][line][MMlongString][][]
+\definefield[Email][line][MMlongString][][]
+\definefield[ErsterNickname][line][MMlongString][][]
+\definefield[isHacker][check][MMcheck]
+\definefield[isHipster][check][MMcheck]
+\definefield[Geburtsdatum][line][MMshortString][][]
+\definefield[Religion][line][MMshortString][][]
+\definefield[ErsterNickname][line][MMlongString][][]
+\definefield[ERFA][line][MMlongString][][]
+\definefield[canIoT][check][MMcheck]
+\definefield[canBlockchain][check][MMcheck]
+\definefield[canInd40][check][MMcheck]
+\definefield[canKI][check][MMcheck]
+\definefield[canECDA][check][MMcheck]
+\definefield[canIMK][check][MMcheck]
+\definefield[canHTML][check][MMcheck]
+\definefield[canJS][check][MMcheck]
+\definefield[canCyber][check][MMcheck]
+\definefield[canEO][check][MMcheck]
+\definefield[isDE][check][MMcheck]
+\definefield[isAT][check][MMcheck]
+\definefield[isBY][check][MMcheck]
+\definefield[isDES][check][MMcheck]
+\definefield[isANY][check][MMcheck]
+\definefield[ICQ][line][MMlongString][][]
+\definefield[Beschwerdenummer][line][MMlongString][][]
+%\definefield[Nickname][line][MMlongString][][]
+\definefield[Adressat][line][MMmediumString][][]
+\definefield[AdrPQ][line][MMshortString][][]
+\definefield[ArtBesch][line][MMmediumString][][]
+\definefield[isDringend][check][MMcheck]
+\definefield[isNotDringend][check][MMcheck]
+\definefield[isAbgespr][check][MMcheck]
+\definefield[isNotAbgespr][check][MMcheck]
+\definefield[Anliegen][text][MMwidetextfield][][]
+
+\definefield[SAZweigstelle][line][MMmediumString][][]
+\definefield[SAPQ][line][MMshortString][][]
+\definefield[SAArtBesch][line][MMmediumString][][]
+\definefield[SAisNotDringend][check][MMcheck]
+\definefield[SAAnliegen][text][MMtextfield][][]
+
+
+\starttext %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Nach Bearbeitung retournieren an: (Diese Daten werden nur durch die Chaos-Post bearbeitet.)
+
+\bTABLE[]
+\bTR\bTD\WORD{Nickname} \field[NicknameTop] \eTD\bTD\WORD{Village} \field[VillageTop] \eTD
+\bTD DECT \field[DECTTop]\eTD\bTD\WORD{Caravan Plate} \field[CaravanTop] \eTD\bTD\WORD{Planquadrat} \field[PlanQTop] \eTD\eTR
+\eTABLE
+
+\blank[line]
+
+{\definedfont[SansBold at 18pt]Chaos-Post Beschwerdeformular}
+
+\blank[line]
+
+\bTABLE[]
+\bTR\bTD[nc=3]\WORD{Nickname} (in Blockschrift):\crlf
+  \field[Nickname]\eTD\eTR
+\bTR\bTD[nc=3]E-Mail:\crlf
+  \field[Email]\eTD\eTR
+\bTR\bTD[nc=3]Erster verwendeter Nickname (alternativ erste verwendete E-Mail-Adresse):\crlf
+  \field[ErsterNickname]\eTD\eTR
+\bTR
+  \bTD\WORD{Geburtsdatum:}\crlf\field[Geburtsdatum]\eTD
+  \bTD\WORD{Typ:}\crlf
+    Hacker/Häckse~\field[isHacker]\quad
+  Hipster/in~\field[isHipster]\eTD
+  \bTD\WORD{Religion:}\crlf\field[Religion]\eTD
+\eTR
+\bTR\bTD[nc=3]\WORD{ERFA-Kreis} (gemäß aktuellen Vereinsdaten; bei Nichtmitgliedern den ERFA mit der geringsten kumulativen sozialen Distanz):\crlf
+  \field[ERFA]\eTD\eTR
+\bTR
+\bTD[nc=3,height=1.5cm]\WORD{Experte/in für:}\crlf
+    IoT~\field[canIoT]\quad
+    Blockchain~\field[canBlockchain]\quad
+    Industrie~4.0~\field[canInd40]\quad
+    Künstliche~Intelligenz~\field[canKI]\quad
+    ECDA~(mit~Auszeichnung~oder~besser)~\field[canECDA]\quad
+    den~industriell-militärischen~Komplex~\field[canIMK]\quad
+    Programmieren~(HTML)~\field[canHTML]\quad
+    Programmieren~(JavaScript)~\field[canJS]\quad
+    Cyber~\field[canCyber]\quad
+    Eh~ois~\field[canEO]
+  \eTD
+\eTR
+\bTR
+  \bTD[nc=3]\WORD{Staatsangehörigkeit:}\crlf
+    Deutschland~\field[isDE]\quad
+    Österreich~\field[isAT]\quad
+    Bayern~\field[isBY]\quad
+    deutschsprachig~\field[isDES]\quad
+    Wurscht~\field[isANY]
+  \eTD
+\eTR
+\bTR\bTD[nc=3]ICQ-Nummer (soweit bekannt):\crlf
+  \field[ICQ]\eTD\eTR
+\bTR\bTD[nc=3]\WORD{Beschwerdenummer} (von der/dem bearbeitenden Beamten/in auszufüllen):\crlf
+  \field[Beschwerdenummer]\eTD\eTR
+\eTABLE
+
+\setupTABLE[1][2][background=color,backgroundcolor=gray,]
+\setupTABLE[c][each][width=0.2\textwidth]
+\setupTABLE[r][1][height=0mm,frame=off]
+\setupTABLE[r][5][height=4cm]
+
+\bTABLE
+\bTR
+  \bTD \eTD\bTD \eTD\bTD \eTD\bTD \eTD\bTD \eTD
+\eTR
+\bTR
+  \bTD[nr=2]{\bf Beschwerde über:}\eTD
+\bTD[nc=3]Adressat/in (Nickname oder E-Mail):\crlf\field[Adressat]\eTD
+\bTD Planquadrat:\crlf\field[AdrPQ]\eTD
+\eTR
+\bTR
+\bTD[nc=3]Art der Beschwerde:\crlf
+\field[ArtBesch]\eTD
+  \bTD Ist diese Beschwerde dringend?\crlf
+Ja~\field[isDringend]\quad Nein~\field[isNotDringend]\eTD
+\bTR
+\bTD[nc=5]Wurden diese Angaben mit der/dem Adressatin/en abgesprochen?\crlf
+Ja~\field[isAbgespr]\quad Nein~\field[isNotAbgespr]\quad\eTD
+\eTR
+\bTR
+\bTD[nc=5]Anliegen:\crlf
+\field[Anliegen]\eTD
+\eTR
+\eTABLE
+
+\setupTABLE[r][4][height=4cm]
+\setupTABLE[r][5][height=1cm]
+
+\bTABLE
+\bTR
+  \bTD \eTD\bTD \eTD\bTD \eTD\bTD \eTD\bTD \eTD
+\eTR
+\bTR
+\bTD[nr=2]{\bf Beschwerde über das Salzamt:}\crlf
+  (Bitte dafür diesen Bereich verwenden.)\eTD
+\bTD[nc=3]Zweigstelle:\crlf
+\field[SAZweigstelle]\eTD
+  \bTD Planquadrat:\crlf
+\field[SAPQ]\eTD
+\eTR
+\bTR
+\bTD[nc=3]Art der Beschwerde:\crlf
+\field[SAArtBesch]\eTD
+  \bTD Ist diese Beschwerde dringend?\crlf
+Nein~\field[SAisNotDringend]\eTD
+\eTR
+\bTR
+\bTD[nc=3]Anliegen:\crlf
+\field[SAAnliegen]\eTD
+\bTD[nc=2,nr=2]Amtsrundsiegel des Salzamts:\crlf
+(Beschwerden ohne gültiges Siegel werden nicht bearbeitet.)
+\eTD
+\eTR
+\bTR
+  \bTD[nc=3]Unterschrift der/des Beschwerdeführer/in:\eTD
+\eTR
+\eTABLE
+
+\attachment[beschwerdeform.tex]\hfill Made with \CONTEXT\ MkIV (Lua\TeX\ 1.10.1) by Hraban
+
+\stoptext
